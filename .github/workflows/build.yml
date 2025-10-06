@@ -81,12 +81,15 @@ jobs:
         path: build/com_filemanager_v${{ steps.version.outputs.VERSION }}.zip
         compression-level: 0
         
-    - name: Create Release
-      if: startsWith(github.ref, 'refs/tags/v')
+    - name: Create or Update Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v2
       with:
+        tag_name: v${{ steps.version.outputs.VERSION }}
+        name: Release v${{ steps.version.outputs.VERSION }}
         files: build/com_filemanager_v${{ steps.version.outputs.VERSION }}.zip
         generate_release_notes: true
-        name: Release v${{ steps.version.outputs.VERSION }}
+        draft: false
+        prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
