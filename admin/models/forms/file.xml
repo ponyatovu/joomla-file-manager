@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset>
+        <field name="filename" type="text" label="COM_FILEMANAGER_FIELD_FILENAME" readonly="true" />
+        <field name="path" type="hidden" />
+        <field name="content" type="textarea" label="COM_FILEMANAGER_FIELD_CONTENT" rows="25" cols="80" />
+    </fieldset>
+</form>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.1.0" method="upgrade">
+    <name>COM_FILEMANAGER</name>
+    <author>Yuriy Ponyatov</author>
+    <creationDate>October 2025</creationDate>
+    <copyright>Copyright (c) 2025 Yuriy Ponyatov</copyright>
+    <license>GNU General Public License version 2 or later</license>
+    <authorEmail>ponyatov@example.com</authorEmail>
+    <authorUrl>https://github.com/ponyatovu</authorUrl>
+    <version>1.2.1</version>
+    <description>COM_FILEMANAGER_XML_DESCRIPTION</description>
+
+    <files folder="site">
+        <filename>index.html</filename>
+        <filename>filemanager.php</filename>
+        <filename>controller.php</filename>
+    </files>
+
+    <administration>
+        <menu>COM_FILEMANAGER</menu>
+        <files folder="admin">
+            <filename>index.html</filename>
+            <filename>filemanager.php</filename>
+            <filename>controller.php</filename>
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+            <folder>controllers</folder>
+            <folder>helpers</folder>
+            <folder>models</folder>
+            <folder>views</folder>
+            <folder>sql</folder>
+            <folder>language</folder>
+        </files>
+
+        <languages folder="admin/language">
+            <language tag="en-GB">en-GB/en-GB.com_filemanager.ini</language>
+            <language tag="en-GB">en-GB/en-GB.com_filemanager.sys.ini</language>
+            <language tag="ru-RU">ru-RU/ru-RU.com_filemanager.ini</language>
+            <language tag="ru-RU">ru-RU/ru-RU.com_filemanager.sys.ini</language>
+        </languages>
+    </administration>
+</extension>

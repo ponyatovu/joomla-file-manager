@@ -1,0 +1,91 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+      
+    - name: Generate version
+      id: version
+      run: |
+        # Версия в формате 1.2.<номер_сборки>
+        BUILD_NUMBER=${{ github.run_number }}
+        VERSION="1.2.${BUILD_NUMBER}"
+        echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        echo "Build version: $VERSION"
+        
+        # Обновляем версию в манифесте
+        sed -i "s|<version>.*</version>|<version>$VERSION</version>|" filemanager.xml
+        
+    - name: Build package
+      run: |
+        COMPONENT_NAME="com_filemanager"
+        VERSION="${{ steps.version.outputs.VERSION }}"
+        BUILD_DIR="build"
+        PACKAGE_NAME="${COMPONENT_NAME}_v${VERSION}.zip"
+        
+        echo "Building Joomla File Manager Component..."
+        echo "Version: $VERSION"
+        
+        # Create build directory
+        rm -rf "$BUILD_DIR"
+        mkdir -p "$BUILD_DIR"
+        
+        # Create package structure
+        PACKAGE_DIR="$BUILD_DIR/$COMPONENT_NAME"
+        mkdir -p "$PACKAGE_DIR"
+        
+        echo "Copying files..."
+        
+        # Copy manifest
+        cp filemanager.xml "$PACKAGE_DIR/"
+        
+        # Copy admin files
+        mkdir -p "$PACKAGE_DIR/admin"
+        cp -r admin/* "$PACKAGE_DIR/admin/"
+        
+        # Copy site files
+        mkdir -p "$PACKAGE_DIR/site"
+        cp -r site/* "$PACKAGE_DIR/site/"
+        
+        echo "Creating ZIP package..."
+        
+        # Create ZIP from package directory
+        cd "$BUILD_DIR/$COMPONENT_NAME"
+        zip -r "../$PACKAGE_NAME" . -q
+        cd ../..
+        
+        echo "========================================="
+        echo "Build completed successfully!"
+        echo "========================================="
+        echo "Package: $BUILD_DIR/$PACKAGE_NAME"
+        echo "Size: $(du -h $BUILD_DIR/$PACKAGE_NAME | cut -f1)"
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: com_filemanager_v${{ steps.version.outputs.VERSION }}
+        path: build/com_filemanager_v${{ steps.version.outputs.VERSION }}.zip
+        
+    - name: Create Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build/com_filemanager_v${{ steps.version.outputs.VERSION }}.zip
+        generate_release_notes: true
+        name: Release v${{ steps.version.outputs.VERSION }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

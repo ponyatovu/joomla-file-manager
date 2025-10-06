@@ -1,0 +1,2 @@
+-- SQL install file for com_filemanager
+-- This component doesn't use database tables
